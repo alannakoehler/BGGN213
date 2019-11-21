@@ -1,0 +1,207 @@
+---
+title: "Class 8 Machine Learning 1"
+author: "Alanna Koehler"
+date: "10/25/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## K-means example
+
+Generate a simple dataset for clustering: 
+```{r}
+tmp <- c(rnorm(30,-3), rnorm(30,3)) #Give you 30 points centered at -3 and 30 points centered at 3.
+x <- cbind(x=tmp, y=rev(tmp)) #column-wise binds our vector into 2 columns
+plot(x)
+```
+
+Use the kmeans() function setting k to 2 and nstart=20
+```{r}
+k <- kmeans(x, centers = 2, nstart = 20)
+
+```
+This gives us a list of 9 elements in our global environment. Print the results
+```{r}
+k
+```
+The clustering vector tells you in which cluster each element lies.
+
+Inspect the results:
+Q. How many points are in each cluster?
+```{r}
+k$size
+```
+  
+Q. What ‘component’ of your result object details
+ - cluster size?
+```{r}
+k$cluster
+```
+ 
+ - cluster assignment/membership?
+```{r}
+table(k$cluster)
+```
+ 
+ - cluster center?
+```{r}
+k$centers
+```
+ 
+Plot x colored by the kmeans cluster assignment and add cluster centers as blue points
+```{r}
+plot(x, col = k$cluster)
+points(k$centers, col = "blue", pch = 15)
+```
+ 
+## Hierarchical clustering example
+First we need to calculate point (dis)similarity as the Euclidean distance between observations. 
+```{r}
+dist_matrix <- dist(x)
+```
+The hclust() function returns a hierarchical clustering model
+```{r}
+hc <- hclust(d = dist_matrix)
+```
+The print method is not so useful here
+```{r}
+hc
+```
+Plot results in a dendrogram
+```{r}
+plot(hc)
+```
+You then have to cut this tree in a position you like. First you can generate an abline:
+```{r}
+plot(hc)
+abline(h=6, col="red")
+abline(h=4, col="blue")
+```
+Cut the tree at a certain height and assign each element to a cluster. 
+```{r}
+cutree(hc, h=6)
+cutree(hc, h=4)
+```
+You can quantify how many elements are in each cut group by making a table.
+```{r}
+grps <- cutree(hc, h=6)
+table(grps)
+```
+Once you have defined the groups, you can then color your clusters based on those groups.
+```{r}
+plot(x, col = grps)
+```
+You can also cut the tree to yield a given k groups/clusters
+```{r}
+cutree(hc, k=2)
+```
+
+## Using different hierarchical clustering methods
+Step 1. Generate some example data for clustering
+```{r}
+x <- rbind(
+ matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2), # c1
+ matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
+ matrix(c(rnorm(50, mean = 1, sd = 0.3), # c3
+ rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
+colnames(x) <- c("x", "y")
+```
+Step 2. Plot the data without clustering
+```{r}
+plot(x)
+```
+Step 3. Generate colors for known clusters (just so we can compare to hclust results).
+```{r}
+col <- as.factor( rep(c("c1","c2","c3"), each=50) )
+plot(x, col=col)
+```
+
+Answer questions
+Use the dist(), hclust(), plot() and cutree() functions to return 2 and 3 clusters. How does this compare to your known col groups. 
+```{r}
+hc2 <- hclust(dist(x))
+plot(hc2)
+abline(h=2.5, col = "red")
+abline(h=2, col = "blue")
+```
+
+```{r}
+grps2 <- cutree(hc2, k=2)
+table(grps2)
+```
+```{r}
+plot(x, col = grps2)
+```
+
+```{r}
+table(col, grps2)
+```
+
+```{r}
+grps3 <- cutree(hc2, k=3)
+table(grps3)
+```
+```{r}
+plot(x, col = grps3)
+```
+```{r}
+table(col, grps3)
+```
+
+
+## Principle Component Analysis
+
+Plot example data
+```{r}
+mydata <- read.csv("https://tinyurl.com/expression-CSV",
+ row.names=1)
+head(mydata)
+```
+Note that samples are columns and genes are rows. 
+
+Now define your PCA components and look at the attributes
+```{r}
+pca <- prcomp(t(mydata), scale=TRUE) #Need to transpose with t() bc prcomp expects samples to be rows and genes to be columns
+attributes(pca) 
+```
+Make a basic PC1 vs PC2 plot.
+```{r}
+plot(pca$x[,1], pca$x[,2]) 
+```
+You can take a look at the importance of components using the summary()
+```{r}
+summary(pca)
+```
+Now you can see that PC1 captures 92.6% of the variance. 
+
+Calculate variance captured by each PC.
+```{r}
+pca.var <- pca$sdev^2 
+pca.var
+```
+You can also look at percent variance.
+```{r}
+pca.var <- pca$sdev^2 #square the standard deviation
+pca.var.per <- round(pca.var/sum(pca.var)*100, 1)  #variance divided by total possible sum in percent
+pca.var.per
+```
+Make a scree plot.
+```{r}
+barplot(pca.var.per, main="Scree Plot",
+ xlab="Principal Component", ylab="Percent Variation")
+```
+
+Add color to your PCA plot.
+```{r}
+colvec <- as.factor( substr( colnames(mydata), 1, 2) ) #substr() takes a substring
+plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
+ xlab=paste0("PC1 (", pca.var.per[1], "%)"),
+ ylab=paste0("PC2 (", pca.var.per[2], "%)"))
+```
+
+ 
+ 

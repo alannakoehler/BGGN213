@@ -1,0 +1,138 @@
+---
+title: "Class07 R Functions and Packages"
+author: "Alanna Koehler"
+date: "10/23/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Revisiting functions from last class
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+#These files are read only.
+```
+
+Let's try our rescale() function from last class
+```{r}
+rescale(1:10)
+```
+
+```{r}
+rescale(c(3, 10, NA, 7))
+#Remember we fixed our function so it doesn't propagate NA. If you insert a string, however, you will get an error message. 
+```
+
+```{r}
+rescale2("barry")
+#This new function adds an "if" loop to stop the process if the input is not a numeric AND return a unique error message.
+#if( !is.numeric(x) ) {
+ #stop("Input x should be numeric", call.=FALSE)
+ #}
+```
+
+We want to write a function, called both_na(), that counts how many positions in two input vectors, x and y, both have a missing value:
+Tip: Search for existing functionality to get us started. Get a working snippet of code that is close to what we want then rewrite and test various inputs (ie. eejit proofing)
+```{r}
+#First define your variables
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+#Then find a pre-existing function
+is.na(x) #determines if x value is na
+is.na(y) #determines if y value is na
+is.na(x) & is.na(y) #in which cases are both of these things TRUE
+```
+
+```{r}
+#Refine those pre-existing functions and test
+sum(is.na(x) & is.na(y)) #determines how many indices there are where x AND y are both na
+```
+```{r}
+#Define your own function
+both_na <- function(x,y) { #assign to a name and define arguments
+  sum(is.na(x) & is.na(y)) #write the body
+}
+#Now test that new function with your original scenario
+both_na(x,y)
+```
+```{r}
+#Now test your function with new parameters
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+y3 <- c(1, NA, NA, NA, NA, NA)
+both_na(x, y1) #Return data for x and y1
+both_na(x, y2) #Return data for x and y2... Gives you a warning that the vectors are not equal length but returns an answer of 3 by recycling x.
+both_na(x, y3) #Return data for x and y3...Does NOT give you a warning because y3 is double the length of x. However, because x, the shorter vector, is recycled, the count is 5.
+```
+
+```{r}
+#Aside on recycling
+plot(1:10, col=c("red", "blue", "green")) 
+#In this example, we recycle through colors.
+```
+
+```{r}
+#Now revise to make your function better
+both_na2 <- function(x,y) {
+   if(length(x) != length(y)) { #Put your stop or warning as early as possible!
+    stop("Input vectors should be the same length!") #If you don't want the original error message, use .call=FALSE
+  }
+  sum(is.na(x) & is.na(y)) 
+}
+
+#Retest the revised function. Does it work as expected in both cases?
+both_na2(x, y1)
+both_na2(x, y3)
+```
+```{r}
+#You can make this even more complex if desired:
+both_na3 <- function(x, y) {
+ if(length(x) != length(y)) {
+ stop("Input x and y should be vectors of the same length")
+ }
+
+ na.in.both <- ( is.na(x) & is.na(y) )
+ na.number <- sum(na.in.both)
+ na.which <- which(na.in.both)
+ message("Found ", na.number, " NA's at position(s):",
+ paste(na.which, collapse=", ") )
+
+ return( list(number=na.number, which=na.which) )
+}
+
+#Test it
+both_na3(x, y1)
+both_na3(x, y3)
+```
+
+
+
+##In Class Exercise
+Write a function grade() to determine an overall grade from a vector of student homework assignment scores dropping the lowest single alignment score.
+
+```{r}
+# student 1
+student1 <- c(100, 100, 100, 100, 100, 100, 100, 90)
+# student 2
+student2 <- c(100, NA, 90, 90, 90, 90, 97, 80)
+#student 3
+student3 <- c(100, NA, NA, NA, NA, NA, NA, NA)
+```
+
+```{r}
+grade <-function(x){
+  x[is.na(x)] <- 0 #Set NA equal to 0
+  round(mean(x[-which.min(x)])) #Take the mean except the min value and round.
+}
+grade(student1)
+grade(student2)
+grade(student3)
+```
+
+Now grade all students in an example class
+url <- "https://tinyurl.com/gradeinput"
+

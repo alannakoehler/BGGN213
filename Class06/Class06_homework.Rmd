@@ -1,0 +1,41 @@
+---
+title: "Class06 Homework"
+author: "Alanna Koehler"
+date: "10/18/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load library bio3d.
+```{r}
+library(bio3d)
+```
+
+Write a function plot_pdb() that will read a PDB file and trim it to contain just chain A and alpha carbons.
+```{r}
+plot_pdb <- function(x) {
+  trim.pdb(read.pdb(x), chain="A", elety="CA") 
+}
+```
+
+Execute new function plot_pdb() for each PDB file and assign a new variable name for each.
+```{r}
+s1 <- plot_pdb("1AKE") #without drug
+s2 <- plot_pdb("4AKE") #with drug A
+s3 <- plot_pdb("1E4Y") #with drug B
+```
+
+Make a line plot of the "atom" and "b" columns from the first variable (s1), along with SSE along the x axis (Residue). The y axis is Bfactor. Now add the other 2 variable sets (s2 and s3) in different colors to the line plot. Generate a color-coded legend in the top right corner and a title at the top.
+```{r}
+plotb3(s1$atom$b, sse=s1, top = FALSE, typ="l", ylab="Bfactor") #plot the first variable
+points(s2$atom$b, typ="l", ylab="Bfactor", col="red") #add a second variable
+points(s3$atom$b, typ="l", ylab="Bfactor", col="blue") #add third variable
+leg = c("no drug", "drug A", "drug B") #define legend text
+legend("topright", legend = leg, fill = c("black", "red", "blue"), bty = "n", inset = 0) #generate a legend
+title(main = "Protein Drug Interactions") #generate a title
+```

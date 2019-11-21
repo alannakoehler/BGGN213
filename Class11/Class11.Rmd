@@ -1,0 +1,81 @@
+---
+title: "Class11"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Q1: Download a CSV file from the PDB site (accessible from “Analyze” -> “PDB Statistics” >
+“by Experimental Method and Molecular Type”). Move this CSV file into your RStudio project
+and determine the percentage of structures solved by X-Ray and Electron Microscopy. 
+
+```{r}
+data_summary <- read.csv("Data Export Summary.csv")
+ans <- data_summary$Total/sum(data_summary$Total)*100
+names(ans) <- data_summary$Experimental.Method
+round(ans, 2)
+```
+
+Also can you determine what proportion of structures are protein?
+```{r}
+round(sum(data_summary$Proteins)/sum(data_summary$Total)*100, 2)
+```
+
+
+# Working with biomolecular data in r
+```{r}
+library(bio3d)
+pdb <- read.pdb("1hsg")
+pdb
+```
+```{r}
+attributes(pdb)
+```
+
+```{r}
+head(pdb$atom)
+```
+Print a subset of $atom data for the first two atoms
+```{r}
+pdb$atom[1:2, c("eleno", "elety", "x","y","z")]
+```
+Note that individual $atom records can also be accessed like this
+```{r}
+pdb$atom$elety[1:2]
+```
+Which allows us to do the following:
+```{r}
+plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab="B-factor")
+```
+
+You can also pull up a particular coordinate, for example to determine the res ID of atom 2. 
+```{r}
+pdb$atom[2, "resid"]
+```
+
+# Atom selection
+
+This will save a new file to your working directory.
+```{r}
+protein <- atom.select(pdb, "protein", value=TRUE)
+write.pdb(protein, file="1hsg_protein.pdb")
+
+
+ligand <- atom.select(pdb, "ligand", value=TRUE)
+write.pdb(ligand, file="1hsg_ligand.pdb")
+```
+
+
+# Let's try an NMA
+
+```{r}
+pdb <- read.pdb("1hel")
+modes <- nma(pdb)
+m7 <- mktrj(modes,
+ mode=7,
+ file="mode_7.pdb")
+view(m7, col=vec2color( rmsf(m7) ))
+```
+

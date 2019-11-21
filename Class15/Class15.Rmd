@@ -1,0 +1,86 @@
+---
+title: "Class 15"
+author: "Alanna Koehler"
+date: "11/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(DESeq2)
+```
+
+```{r}
+metaFile <- "GSE37704_metadata.csv"
+countFile <- "GSE37704_featurecounts.csv"
+```
+
+```{r}
+colData = read.csv(metaFile, row.names=1)
+head(colData)
+```
+
+```{r}
+countData = read.csv(countFile, row.names=1)
+head(countData)
+```
+
+Looks like we need to remove the first column in countData, the "length" col
+```{r}
+countData <- countData[,-1] #This is the dangerous practice that removes the first column each time you run it.
+head(countData)
+```
+
+Remove rows where the row sum is equal to 0
+```{r}
+countData<- countData[(rowSums(countData) > 0), ]
+head(countData)
+```
+
+How many genes are left?
+```{r}
+nrow(countData)
+```
+
+We can't possibly plot all these genes. Do principle component analysis with the transpose of the data insetad.
+```{r}
+pc <- prcomp(t(countData))
+plot(pc)
+```
+
+```{r}
+summary(pc)
+```
+
+```{r}
+attributes(pc)
+```
+Base PCA plot
+```{r}
+plot(pc$x[,1:2], col = colData$condition)
+```
+You can also control the colors if you like.
+```{r}
+mycols <- c(rep("blue",3), rep("red",3))
+plot(pc$x[,1:2], col = mycols)
+```
+
+Run DESeq2
+```{r}
+dds = DESeqDataSetFromMatrix(countData = countData,
+                             colData = colData,
+                             design=~condition)
+dds = DESeq(dds)
+```
+
+```{r}
+dds
+```
+
+```{r}
+res = results(dds)
+```
+

@@ -1,0 +1,90 @@
+---
+title: 'Class 6: R Functions'
+author: "Alanna Koehler"
+date: "10/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# This is an H1 heading
+This is my class 6 work. 
+
+## This is an H2 heading
+
+### This is an H3 heading
+
+```{r}
+plot(1:10)
+```
+
+
+```{r}
+read.csv("test1.txt")
+read.table("test2.txt", header = TRUE, sep = "$")
+read.table("test3.txt", sep = "")
+```
+
+Our first silly
+```{r}
+add <- function(x, y=1) {
+ # Sum the input x and y
+ x + y}
+```
+
+
+```{r}
+add(c(5,6))
+```
+ 
+ If you add three values, you wil get an error because you only specified x and y in the function above. You can, however, use a vector.
+ 
+```{r}
+add (c(5,5,NA,7))
+```
+ NA holds a space in your dataframe and returns NA. 
+ 
+Writing your own function:
+You need a “name”, “arguments” and “body”. If you plan on having NA values, you need to indicate na.rm = TRUE to omit those values.
+```{r}
+rescale <- function(x) {
+ rng <-range(x, na.rm = TRUE)
+ (x - rng[1]) / (rng[2] - rng[1])
+}
+```
+Click the play button to add to your environment. Test with a known value.
+
+```{r}
+rescale(1:10)
+```
+
+
+```{r}
+rescale(c(1,2,NA,5))
+```
+
+Try this function:
+```{r}
+rescale2 <- function(x, na.rm=TRUE, plot=FALSE) {
+ if(na.rm) {
+ rng <-range(x, na.rm=na.rm)
+ } else {
+ rng <-range(x)
+ }
+ print("Hello")
+ answer <- (x - rng[1]) / (rng[2] - rng[1])
+ print("is it me you are looking for?")
+ if(plot) {
+ plot(answer, typ="b", lwd=4)
+ }
+ print("I can see it in ...")
+}
+```
+
+Test this function:
+```{r}
+rescale2(1:10)
+```
+
