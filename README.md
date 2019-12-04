@@ -7,17 +7,17 @@ Contents:
 
 -Class05: Data Visualization
 
-  [Notes] (https://github.com/alannakoehler/BGGN213/blob/master/Class05/Class5_DataVis.R)
+  [Notes](https://github.com/alannakoehler/BGGN213/blob/master/Class05/Class5_DataVis.R)
   
-  [Worksheet] (https://github.com/alannakoehler/BGGN213/blob/master/Class05/Class5_worksheet.R)
+  [Worksheet](https://github.com/alannakoehler/BGGN213/blob/master/Class05/Class5_worksheet.R)
   
 -Class06: R Functions
 
-  [Notes] (https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06.rmd)
+  [Notes](https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06.rmd)
   
-  [Worksheet] (https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06_homework_new.Rmd)
+  [Worksheet](https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06_homework_new.Rmd)
   
-  [Worksheet PDF] (https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06%20Homework.pdf)
+  [Worksheet PDF](https://github.com/alannakoehler/BGGN213/blob/master/Class06/Class06%20Homework.pdf)
   
 -Class07
 
