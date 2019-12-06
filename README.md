@@ -1,6 +1,6 @@
 # Foundations of Bioinformatics
 
-Repository for Alanna Koehler's BGGN213 projects and notes from Fall 2019
+Repository for Alanna Koehler's projects and notes from Fall 2019 BGGN213 with Dr. Barry J. Grant
 University of California, San Diego
 
 Contents:
